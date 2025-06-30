@@ -1,36 +1,126 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Project Structure
 
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+src/
+├── app/                    # Next.js app directory
+│   ├── api/               # API routes
+│   │   └── analyze/       # Newsletter analysis endpoint
+│   │       └── index.tsx
+│   ├── layout.tsx         # Root layout
+│   └── page.tsx           # Home page
+├── assets/                # Static assets
+│   └── icons/            # SVG icons as React components
+├── components/            # React components
+│   ├── common/           # Shared components
+│   │   └── LoadingSpinner.tsx
+│   ├── Input/            # Input-related components
+│   │   └── EmailHTMLInput/   # Main email input component
+│   │       ├── components/   # Sub-components
+│   │       │   ├── InputSection.tsx
+│   │       │   ├── Tag.tsx
+│   │       │   └── ResultDisplay/
+│   │       └── index.tsx
+│   └── MatrixRain.tsx    # Matrix rain animation
+└── lib/                  # Utility functions and services
+    ├── env.ts            # Environment configuration
+    ├── parser.ts         # HTML parsing utilities
+    └── services/         # External service integrations
+        └── openai.ts     # OpenAI service
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Architecture
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **EmailHTMLInput**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   - Main container component
+   - Manages state and API interactions
+   - Coordinates sub-components
 
-## Learn More
+2. **InputSection**
 
-To learn more about Next.js, take a look at the following resources:
+   - Handles user input
+   - Manages input validation
+   - Controls submission process
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. **ResultDisplay**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   - Renders analysis results
+   - Composed of specialized sections:
+     - TagsSection
+     - SummarySection
+     - MetadataSection
+     - RawTextSection
 
-## Deploy on Vercel
+4. **Common Components**
+   - LoadingSpinner
+   - Tag
+   - ArrowIcon
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Data Flow
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. User inputs HTML content
+2. Content is sent to `/api/analyze` endpoint
+3. Server processes HTML:
+   - Extracts text using HTMLParser
+   - Sends to OpenAI for analysis
+4. Results are displayed in organized sections
+
+## API Response Format
+
+```typescript
+interface AnalysisResponse {
+  raw_text: string;
+  tags: {
+    classification: string[];
+    sentiment: string[];
+    action: string[];
+    technical_depth: string;
+    credibility: string[];
+  };
+  summary: {
+    brief: string;
+    key_points: string[];
+    action_items?: string[];
+  };
+  metadata: {
+    analyzed_at: string;
+    word_count: number;
+    topics: string[];
+  };
+}
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- OpenAI for providing the GPT API
+- Next.js team for the amazing framework
+- All contributors and users of this project
+
+---
+
+Built with ❤️ using Next.js and OpenAI
+
+sequenceDiagram
+participant Client as React Frontend
+participant API as Next.js API Route
+participant Parser as HTMLParser
+participant AI as OpenAI Service
+
+    Client->>API: POST /api/analyze (HTML)
+    API->>Parser: Extract text
+    Parser-->>API: Clean text
+    API->>AI: Analyze text
+    AI-->>API: Analysis results
+    API-->>Client: Structured response
