@@ -13,7 +13,7 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ result }) => {
   return (
     <div className="space-y-6 text-white/90">
       <TagsSection tags={result.tags} />
-      <SummarySection summary={result.summary} />
+      <SummarySection synopsis={result.synopsis} />
       <MetadataSection metadata={result.metadata} />
       <RawTextSection rawText={result.raw_text} />
     </div>

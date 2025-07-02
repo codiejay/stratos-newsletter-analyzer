@@ -12,15 +12,21 @@ export interface AnalysisResponse {
     technical_depth: string;
     credibility: string[];
   };
-  summary: {
+  synopsis: {
     brief: string;
     key_points: string[];
+    interesting_facts: string[];
     action_items?: string[];
   };
   metadata: {
     analyzed_at: string;
     word_count: number;
-    topics: string[];
+    topics: {
+      business_names: string[];
+      technologies: string[];
+      legislation: string[];
+      general: string[];
+    };
   };
 }
 
